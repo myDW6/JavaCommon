@@ -1,12 +1,17 @@
 package com.shaodw.json;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -73,4 +78,60 @@ public class JSONUse {
 		JSONObject json = new JSONObject(s);
 		System.out.println(json);
 	}
+	
+	@Test
+	public void demo6() throws JSONException, IOException {
+		//生成json文件
+		//准备map 通过map生产json
+		Map<String, Person> map = new HashMap<>();
+		Person p1 = new Person("张三", 14, new Address("北京", "上海"));
+		Person p2 = new Person("李四", 25, new Address("重庆", "湖南"));
+		Person p3 = new Person("王五", 41, new Address("青岛", "天津"));
+		map.put("zs", p1);
+		map.put("ls", p2);
+		map.put("ww", p3);
+		JSONObject json = new JSONObject(map);
+		Writer writer = new FileWriter("D:\\a.json");
+		json.write(writer);
+		writer.close();
+	}
+	
+	@Test
+	public void demo07() {
+		//JSONArray的使用
+		String str = "[{\"name\":\"zs\", \"age\":12}, {\"className\":\"jike1\", \"classNo\":2},{\"sAddress\":\"chonging\"}]";
+		//String -> JSON数组
+		JSONArray jsonArray = new JSONArray(str);
+		System.out.println(jsonArray);
+	}
+	
+	@Test
+	public void demo08() {
+		//Map -> JSONArray
+		Map<String, String> map = new HashMap<>();
+		map.put("k1", "v1");
+		map.put("k2", "v2");
+		map.put("k3", "v3");
+		//使用额外的json lib库
+		//注意这里使用的JSONArray不是上面的json.jar中的JSONArray,而是JSON Lib库中(json lib 官网 )
+		net.sf.json.JSONArray jsonArray = new net.sf.json.JSONArray().fromObject(map);
+		System.out.println(jsonArray);
+	}
+	
+	@Test
+	public void demo09() {
+		//JSONArray -> Map
+		net.sf.json.JSONArray jsonArray = new net.sf.json.JSONArray().fromObject("[{\"name\":\"zs\", \"age\":12}, {\"className\":\"jike1\", \"classNo\":2},{\"sAddress\":\"chonging\"}]");
+		//遍历jsonarray获取每一个json,都是key - value形式  —> map
+		Map<String, Object> map = new HashMap<>();
+		for (int i = 0; i < jsonArray.size(); i++) {
+			net.sf.json.JSONObject jsonObj = (net.sf.json.JSONObject)jsonArray.get(i);
+			Set<String> set = jsonObj.keySet();
+			for (String s : set) {
+				map.put(s, jsonObj.get(s));
+			}
+		}
+		System.out.println(map);
+	}
 }
+
